@@ -1198,8 +1198,27 @@ public class HtmlConverterCoreNodeRenderer implements PhasedHtmlNodeRenderer {
         myTable.setCaption(context.processTextNodes(element).trim());
     }
 
+    private String replaceMultipleBlankSpace(String cellText) {
+        StringBuilder result = new StringBuilder();
+        boolean wasSpace = false;
+
+        for (char c : cellText.toCharArray()) {
+            if (Character.isWhitespace(c)) {
+                if (!wasSpace) {
+                    result.append(' ');
+                    wasSpace = true;
+                }
+            } else {
+                result.append(c);
+                wasSpace = false;
+            }
+        }
+
+        return result.toString();
+    }
+
     private void handleTableCell(Element element, HtmlNodeConverterContext context, HtmlMarkdownWriter out) {
-        String cellText = context.processTextNodes(element).trim().replaceAll("\\s*\n\\s*", " ");
+        String cellText = replaceMultipleBlankSpace(context.processTextNodes(element).trim());
         int colSpan = 1;
         int rowSpan = 1;
         CellAlignment alignment = null;
